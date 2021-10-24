@@ -1,0 +1,42 @@
+server:
+  port: 9100
+  servlet:
+    context-path: /pvs-api
+
+message:
+  exception: "exception error"
+  success: "你成功了!"
+  fail: "你失敗了!"
+  invalid:
+    url: "你連URL都不會打嗎?"
+
+webClient:
+  baseUrl:
+    sonar: "http://localhost:9000/api"
+    github: "https://api.github.com/graphql"
+    test: ""
+#
+#logging:
+#  config: classpath:log4j2.xml
+
+spring:
+  profiles:
+    active: test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/PVS
+    username:
+    password:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  jackson:
+    time-zone: Asia/Taipei
+

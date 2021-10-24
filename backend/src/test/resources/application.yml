@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+
+message:
+  exception: "exception error"
+  success: "你成功了!"
+  fail: "你失敗了!"
+  invalid:
+    url: "你連URL都不會打嗎?"
+
+webClient:
+  baseUrl:
+    sonar: "http://localhost:9000/api"
+    github: "https://api.github.com/graphql"
+    test: ""
