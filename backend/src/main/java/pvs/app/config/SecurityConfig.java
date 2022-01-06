@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,6 +31,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Qualifier("userDetailsServiceImpl")
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Value("${frontend.redirect-url}")
+    private String frontendRedirectUrl;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) {
@@ -68,7 +72,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //登入介面放行
                 .antMatchers("/auth/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/member").permitAll()
-                .antMatchers("/project/**", "/github/**", "/sonar/**").hasAuthority("USER");
+                .antMatchers("/project/**", "/github/**", "/sonar/**").hasAuthority("USER")
+                .and()
+                .oauth2Login();
+//                .defaultSuccessUrl(frontendRedirectUrl);
 
         //使用自定義的 Token過濾器 驗證請求的Token是否合法
         http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);

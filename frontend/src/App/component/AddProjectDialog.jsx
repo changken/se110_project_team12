@@ -12,6 +12,7 @@ import {
   DialogActions,
   Button,
 } from '@material-ui/core'
+import GitlabOauth from './GitlabOauth';
 
 export default function AddProjectDialog({ open, reloadProjects, handleClose }) {
     const [projectName, setProjectName] = useState("")
@@ -142,6 +143,7 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
                 ),
               }}
             />
+            <GitlabOauth />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="secondary">

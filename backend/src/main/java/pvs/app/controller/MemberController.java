@@ -5,9 +5,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import pvs.app.dto.MemberDTO;
 import pvs.app.service.MemberService;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -32,6 +37,14 @@ public class MemberController {
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("你去死吧");
         }
+    }
+
+    @GetMapping("/user")
+    public String userInfo(@AuthenticationPrincipal OAuth2User user){
+        System.out.println(user.getAttributes());
+        System.out.println(user.getAuthorities());
+
+        return "sss";
     }
 
 }
