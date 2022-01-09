@@ -41,13 +41,20 @@ export default function () {
               backgroundColor: '#00ccaa',
               padding: '10px',
               marginBottom: '5px',
+              borderRadius: '5px',
             }}
           >
-            {el.name} <br />
-            {el.web_url} <br />
-            <Link to={`/gitlabcommits/${el.id}`}>commits</Link>&nbsp;
-            <Link to={`/gitlabissues/${el.id}`}>issues</Link>&nbsp;
-            <Link to={`/gitlabcodebase/${el.id}`}>codebase</Link>
+            <Link
+              to={`/gitlabcommits/${el.id}`}
+              style={{
+                display: 'block',
+                textDecoration: 'none',
+                color: '#000',
+              }}
+            >
+              {el.name} <br />
+              {el.web_url}
+            </Link>
           </li>
         ))}
       </ul>

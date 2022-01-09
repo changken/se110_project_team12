@@ -10,6 +10,8 @@ import {
   ExpandMore,
   Code,
   GpsFixed,
+  MergeType,
+  CallSplit,
 } from '@material-ui/icons';
 import {
   Drawer,
@@ -298,6 +300,26 @@ function Sidebar(prop) {
                       </ListItemIcon>
                       <ListItemText primary="Code Base" />
                     </ListItem>
+                    <ListItem
+                      button
+                      className={classes.nested}
+                      onClick={goToGitlabMr}
+                    >
+                      <ListItemIcon>
+                        <MergeType />
+                      </ListItemIcon>
+                      <ListItemText primary="Merge request" />
+                    </ListItem>
+                    <ListItem
+                      button
+                      className={classes.nested}
+                      onClick={goToGitlabBranch}
+                    >
+                      <ListItemIcon>
+                        <CallSplit />
+                      </ListItemIcon>
+                      <ListItemText primary="Branch" />
+                    </ListItem>
                   </List>
                 </Collapse>
               </div>
@@ -401,6 +423,16 @@ function Sidebar(prop) {
 
   const goToGitlabCodeBase = () => {
     history.push(`/gitlabcodebase/${id}`);
+  };
+
+  // go to gitlab merge request page
+  const goToGitlabMr = () => {
+    history.push(`/gitlabmr/${id}`);
+  };
+
+  // go to gitlab branch page
+  const goToGitlabBranch = () => {
+    history.push(`/gitlabbranch/${id}`);
   };
 
   const goToCodeCoverage = () => {

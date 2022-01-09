@@ -12,6 +12,8 @@ import GitlabOauthRedirect from '../App/component/GitlabOauthRedirect';
 import GitlabCommitsPage from '../App/component/GitlabCommitsPage';
 import GitlabIssuesPage from '../App/component/GitlabIssuesPage';
 import GitlabCodeBasePage from '../App/component/GitlabCodeBasePage';
+import GitlabMergeRequestPage from '../App/component/GitlabMergeRequestPage';
+import GitlabBranchsPage from '../App/component/GitlabBranchsPage';
 
 const routes = [
   { path: '/', redirect: true, to: '/select' },
@@ -34,6 +36,16 @@ const routes = [
   {
     path: '/gitlabcodebase/:id',
     component: GitlabCodeBasePage,
+    loginRequired: true,
+  },
+  {
+    path: '/gitlabmr/:id',
+    component: GitlabMergeRequestPage,
+    loginRequired: true,
+  },
+  {
+    path: '/gitlabbranch/:id',
+    component: GitlabBranchsPage,
     loginRequired: true,
   },
   { path: '/code_coverage', component: CodeCoveragePage, loginRequired: true },

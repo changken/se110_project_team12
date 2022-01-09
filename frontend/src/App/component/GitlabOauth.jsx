@@ -13,7 +13,7 @@ function GitlabOauth(props) {
     <div>
       {state.access_token !== undefined ? (
         // has access token then show below message
-        <div style={{ backgroundColor: '#C4C400	' }}>
+        <div style={{ backgroundColor: '#C4C400	', padding: '5px' }}>
           <h2 style={{ color: 'red' }}>You had already login Gitlab!</h2>
           <h3>Your currently login username is {state.username}</h3>
           <ShowGitlabRepo />
