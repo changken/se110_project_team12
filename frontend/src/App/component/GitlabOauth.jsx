@@ -5,18 +5,10 @@ import ShowGitlabRepo from './ShowGitlabRepo';
 
 function GitlabOauth(props) {
   const state = useSelector(state => state.oauth);
-  // useEffect(() => {
-  //   alert("The oauth state's status is changed!");
-  // }, [state.access_token]);
 
   const onSuccess = response => alert(response);
   const onFailure = response => console.error(response);
 
-  // const onClick = async e =>{
-  //     window.location.href=`http://localhost:9100/pvs-api/oauth2/authorization/gitlab`;
-  //     alert('Success!');
-  // };
-  // return <img onClick={onClick} style={{width: "100px", height: "auto", cursor:"pointer"}} src="https://about.gitlab.com/images/press/logo/jpg/gitlab-logo-gray-rgb.jpg" alt="Gitlab oauth"/>;
   return (
     <div>
       {state.access_token !== undefined ? (

@@ -12,6 +12,7 @@ function GitlabOauthRedirect(props) {
     const access_token = window.location.hash.split('&')[0].split('=')[1];
     dispatch(oauthLogin(access_token));
 
+    //https://docs.gitlab.com/ee/api/users.html#list-current-user-for-normal-users
     const res = await axios.get('https://gitlab.com/api/v4/user', {
       headers: { Authorization: `Bearer ${access_token}` },
     });

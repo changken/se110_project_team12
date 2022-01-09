@@ -15,3 +15,9 @@ export function getUsername(username) {
     },
   };
 }
+
+export function oauthLogout() {
+  return {
+    type: 'OAUTH_LOGOUT',
+  };
+}

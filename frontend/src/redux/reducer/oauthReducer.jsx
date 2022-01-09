@@ -12,6 +12,10 @@ function oauthReducer(state = initState, action) {
     case 'GET_USERNAME':
       localStorage.setItem('username', payload.username);
       return { ...state, ...payload };
+    case 'OAUTH_LOGOUT':
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('username');
+      return { ...state, access_token: undefined, username: undefined };
     default:
       return state;
   }

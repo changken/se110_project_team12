@@ -1,4 +1,4 @@
-import { oauthLogin, getUsername } from '.';
+import { oauthLogin, getUsername, oauthLogout } from '.';
 
 test('test oauthLogin', () => {
   const access_token =
@@ -19,5 +19,11 @@ test('test username', () => {
     payload: {
       username: 'cwoo',
     },
+  });
+});
+
+test('test oauthLogout', () => {
+  expect(oauthLogout()).toEqual({
+    type: 'OAUTH_LOGOUT',
   });
 });

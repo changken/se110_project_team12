@@ -9,6 +9,9 @@ import BugsPage from '../App/component/BugsPage';
 import CodeSmellsPage from '../App/component/CodeSmellsPage';
 import DuplicationsPage from '../App/component/DuplicationsPage';
 import GitlabOauthRedirect from '../App/component/GitlabOauthRedirect';
+import GitlabCommitsPage from '../App/component/GitlabCommitsPage';
+import GitlabIssuesPage from '../App/component/GitlabIssuesPage';
+import GitlabCodeBasePage from '../App/component/GitlabCodeBasePage';
 
 const routes = [
   { path: '/', redirect: true, to: '/select' },
@@ -18,6 +21,21 @@ const routes = [
   { path: '/commits', component: CommitsPage, loginRequired: true },
   { path: '/issues', component: IssuesPage, loginRequired: true },
   { path: '/codebase', component: CodeBasePage, loginRequired: true },
+  {
+    path: '/gitlabcommits/:id',
+    component: GitlabCommitsPage,
+    loginRequired: true,
+  },
+  {
+    path: '/gitlabissues/:id',
+    component: GitlabIssuesPage,
+    loginRequired: true,
+  },
+  {
+    path: '/gitlabcodebase/:id',
+    component: GitlabCodeBasePage,
+    loginRequired: true,
+  },
   { path: '/code_coverage', component: CodeCoveragePage, loginRequired: true },
   { path: '/bugs', component: BugsPage, loginRequired: true },
   { path: '/code_smells', component: CodeSmellsPage, loginRequired: true },
