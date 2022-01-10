@@ -29,6 +29,7 @@ function GitlabOauth(props) {
           onFailure={onFailure}
           isCrossOrigin={true}
           scope="read_user read_api read_repository"
+          id="gitlabLogin"
         >
           <img
             style={{ width: '100px', height: 'auto', cursor: 'pointer' }}

@@ -156,7 +156,7 @@ function GitlabBranchsPage(prop) {
       <div className={classes.root}>
         <div style={{ width: '67%' }}>
           <div>
-            <h1>Branch last commit at</h1>
+            <h1>Branch which last committed at</h1>
             <div>
               <DrawingBoard data={dataForBranchChart} id="branch-chart" />
             </div>

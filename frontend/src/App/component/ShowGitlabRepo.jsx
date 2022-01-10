@@ -36,6 +36,7 @@ export default function () {
       <ul style={{ listStyle: 'none', paddingLeft: '0' }}>
         {repo.map((el, i) => (
           <li
+            id={el.id}
             key={i}
             style={{
               backgroundColor: '#00ccaa',

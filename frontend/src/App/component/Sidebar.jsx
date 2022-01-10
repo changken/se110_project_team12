@@ -308,7 +308,7 @@ function Sidebar(prop) {
                       <ListItemIcon>
                         <MergeType />
                       </ListItemIcon>
-                      <ListItemText primary="Merge request" />
+                      <ListItemText primary="Merge Request" />
                     </ListItem>
                     <ListItem
                       button
@@ -492,6 +492,7 @@ function Sidebar(prop) {
                 label="Start Month and Year"
                 value={prop.startMonth}
                 onChange={prop.setStartMonth}
+                id="startMonthYear"
               />
             </MuiPickersUtilsProvider>
           </div>
@@ -505,6 +506,7 @@ function Sidebar(prop) {
                 label="End Month and Year"
                 value={prop.endMonth}
                 onChange={prop.setEndMonth}
+                id="endMonthYear"
               />
             </MuiPickersUtilsProvider>
           </div>
