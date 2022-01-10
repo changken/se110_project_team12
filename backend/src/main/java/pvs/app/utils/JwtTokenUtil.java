@@ -51,7 +51,7 @@ public class JwtTokenUtil implements Serializable {
     }
 
     /**
-     * 獲取token是否過期
+     * 獲取 Token 是否過期
      */
     public Boolean isTokenExpired(String token) {
         Date expiration = getExpirationDateFromToken( token );
@@ -59,14 +59,14 @@ public class JwtTokenUtil implements Serializable {
     }
 
     /**
-     * 根據token獲取username
+     * 根據 Token 獲取 username
      */
     public String getUsernameFromToken(String token) {
         return getClaimsFromToken( token ).getSubject();
     }
 
     /**
-     * 獲取token的過期時間
+     * 獲取 Token 的過期時間
      */
     public Date getExpirationDateFromToken(String token) {
         return getClaimsFromToken( token ).getExpiration();

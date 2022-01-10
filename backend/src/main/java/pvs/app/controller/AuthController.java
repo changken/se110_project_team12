@@ -17,11 +17,11 @@ public class AuthController {
     @Autowired
     private AuthService authService;
     /**
-     * 登录
+     * 登入
      */
     @PostMapping(value = "/auth/login")
     public String login( @RequestBody MemberDTO memberDTO ) {
-        // 登录成功会返回Token给用户
+        // 登入成功會發還 Token 給使用者
         return authService.login(memberDTO.getUsername(), memberDTO.getPassword());
     }
 }
