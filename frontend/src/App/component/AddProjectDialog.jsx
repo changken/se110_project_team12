@@ -1,159 +1,236 @@
-import React, { useState, useEffect } from 'react'
-import Axios from 'axios'
-import InputAdornment from '@material-ui/core/InputAdornment';
-import { SiGithub, SiSonarqube } from 'react-icons/si'
-
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  TextField,
-  DialogActions,
-  Button,
-} from '@material-ui/core'
-import GitlabOauth from './GitlabOauth';
+    Avatar,
+    Box,
+    Button,
+    Card,
+    CardActionArea,
+    CardContent,
+    CardHeader,
+    CircularProgress,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    List,
+    ListItemAvatar,
+    ListItemButton,
+    ListItemText,
+    Menu,
+    MenuItem,
+    Stack
+} from '@mui/material'
+import { green } from '@mui/material/colors';
+import { useState } from 'react';
+import { SiGithub, SiGitlab, SiTrello, SiJenkins } from 'react-icons/si'
+import { Add, Delete, Edit, MoreVert } from '@mui/icons-material';
+import axios from 'axios';
 
-export default function AddProjectDialog({ open, reloadProjects, handleClose }) {
-    const [projectName, setProjectName] = useState("")
-    const [githubRepositoryURL, setGithubRepositoryURL] = useState("")
-    const [sonarRepositoryURL, setSonarRepositoryURL] = useState("")
-    const [isGithubAvailable, setIsGithubAvailable] = useState(false)
-    const [isSonarAvailable, setIsSonarAvailable] = useState(false)
-    const jwtToken = localStorage.getItem("jwtToken")
-
-    const createProject = () => {
-      let checker = []
-      if(projectName === "" || (githubRepositoryURL === "" && sonarRepositoryURL === "")) {
-        alert("不準啦馬的>///<")
-      } else {
-        if(githubRepositoryURL !== "") {
-          checker.push(checkGithubRepositoryURL());
+export default function AddProjectDialog({ open, handleClose }) {
+    const [loading, setLoading] = useState(false)
+    const [success, setSuccess] = useState(false)
+    const [circularProgressIndex, setcircularProgressIndex] = useState(0)
+    const [step, setStep] = useState(0)
+    const [anchorEl, setAnchorEl] = useState(false)
+    const openMenu = Boolean(anchorEl);
+    const [data, setData] = useState([])
+    const [selectCard, setSelectCard] = useState("")
+    const loginData = [
+        {
+            text: "GitHub Login",
+            icon: <SiGithub />
+        },
+        {
+            text: "GitLab Login",
+            icon: <SiGitlab />
+        },
+        {
+            text: "Trello Login",
+            icon: <SiTrello />
+        },
+        {
+            text: "Jenkins Login",
+            icon: <SiJenkins />
         }
-        if(sonarRepositoryURL !== "") {
-          checker.push(checkSonarRepositoryURL());
+    ]
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget)
+        setSelectCard(event.currentTarget.id)
+    }
+
+    const handleEditName = () => {
+        const host = "http://localhost:8080/oauth/github/repos/update"
+        let text = prompt("請輸入修改的名稱", selectCard);
+        let name;
+        name = text === null || text === "" ? selectCard : text
+
+        let payload = {
+            token: localStorage.getItem('token'),
+            beforeName: selectCard,
+            afterName: name
         }
 
-        Promise.all(checker)
-          .then((response)=> {
-            if(response.includes(false) == false) {
-              let payload = {
-                projectName : projectName,
-                githubRepositoryURL : githubRepositoryURL,
-                sonarRepositoryURL : sonarRepositoryURL
-              }
-              
-              Axios.post("http://localhost:9100/pvs-api/project", payload,
-              { headers: {"Authorization" : `${jwtToken}`} })
-                 .then((response) => {
-                    reloadProjects()
-                    handleClose()
-                 })
-                 .catch((e) => {
-                    alert(e.response.status)
-                    console.error(e)
-                 }) 
+        console.log(payload)
+
+        axios.post(host, payload
+        ).then((res) => {
+            var response = res.data
+            let newData = [...data]
+            console.log(newData);
+            for (var i = 0; i < newData.length; i++) {
+                var d = newData[i]
+                console.log(d.props.children[0].props.children[0].props.title);
+                console.log(d.props.children[1].props.children[0].props.title);
+                if (d.props.children[0].props.children[0].props.title === selectCard) {
+                    d.props.children[0].props.children[0].props.title = response.name
+                    break
+                } else if (d.props.children[1].props.children[0].props.title === selectCard) {
+                    d.props.children[1].props.children[0].props.title = response.name
+                    break
+                }
             }
-          }).catch((e) => {
-            alert(e.response.status)
-            console.error(e)
-          })
-      }
+            console.log(newData);
+            setData(newData)
+        }).catch((err) => {
+            console.log("err");
+        })
     }
 
-    const checkGithubRepositoryURL = () => {
-      return Axios.get(`http://localhost:9100/pvs-api/repository/github/check?url=${githubRepositoryURL}`,
-      { headers: {"Authorization" : `${jwtToken}`} })
-      .then((response) => {
-        setIsGithubAvailable(true);
-        return true
-      })
-      .catch((e) => {
-        alert("github error")
-        return false
-      }) 
+    const handleClosing = (event) => {
+        // console.log(event)
+        // console.log(event.currentTarget)
+        setAnchorEl(null)
     }
 
-    const checkSonarRepositoryURL = () => {
-      return Axios.get(`http://localhost:9100/pvs-api/repository/sonar/check?url=${sonarRepositoryURL}`,
-      { headers: {"Authorization" : `${jwtToken}`} })
-      .then((response) => {
-        setIsSonarAvailable(true);
-        return true
-      })
-      .catch((e) => {
-        alert("sonar error")
-        console.error(e)
-        return false
-      }) 
+    const handleLogin = (index) => {
+        if (index >= 0 && index <= 4) {
+            setStep(0)
+            if (!loading) {
+                setSuccess(false)
+                setLoading(true)
+            }
+
+            if (index === 0) {
+                setcircularProgressIndex(0)
+                const githubClientId = '4c08f6a53bf874e1c230'
+                var authWindow = window.open(
+                    `https://github.com/login/oauth/authorize/?client_id=${githubClientId}`,
+                    "WindowOpen1",
+                    "toolbar=Yes,location=Yes,directories=Yes,width=400,height=600")
+                var timer = setInterval(() => {
+                    if (authWindow.closed) {
+                        clearInterval(timer)
+                        setSuccess(true)
+                        setLoading(false)
+                        setStep(1)
+                        const host = "http://localhost:8080/oauth/github/repos"
+                        let payload = {
+                            token: localStorage.getItem('token')
+                        }
+                        axios.post(host, payload
+                        ).then((res) => {
+                            var response = res.data
+                            let newData = [...data]
+                            for (var i = 0; i < response.length; i += 2) {
+                                newData.push(
+                                    <List component={Stack} direction="row">
+                                        <Card sx={{ width: 250, maxWidth: 400, overflow: "scroll" }}>
+                                            <CardHeader
+                                                avatar={<Avatar aria-label="recipe">{response[i].name[0]}</Avatar>}
+                                                title={response[i].name}
+                                                action={<IconButton id={response[i].name} onClick={handleClick}><MoreVert /></IconButton>}>
+                                            </CardHeader>
+                                            <CardContent>
+                                                {response[i].description ?? "No description, website, or topics provided."}
+                                            </CardContent>
+                                            <Button variant="text">選擇</Button>
+                                        </Card>
+                                        {(i + 1) < response.length &&
+                                            <Card sx={{ width: 250, maxWidth: 400, overflow: "scroll" }}>
+                                                <CardHeader
+                                                    avatar={<Avatar aria-label="recipe">{response[i + 1].name[0]}</Avatar>}
+                                                    title={response[i + 1].name}
+                                                    action={<IconButton id={response[i + 1].name} onClick={handleClick}><MoreVert /></IconButton>}>
+                                                </CardHeader>
+                                                <CardContent>
+                                                    {response[i + 1].description ?? "No description, website, or topics provided."}
+                                                </CardContent>
+                                                <Button variant="text">選擇</Button>
+                                            </Card>}
+                                    </List>
+                                )
+                            }
+                            setData(newData)
+                        }).catch((err) => {
+                            console.log("err");
+                        })
+                    }
+                }, 1000)
+            } else if (index === 1) {
+                setcircularProgressIndex(1)
+                console.log("GitLab")
+            } else if (index === 2) {
+                setcircularProgressIndex(2)
+                console.log("Trello")
+            } else if (index === 3) {
+                setcircularProgressIndex(3)
+                console.log("Jenkins")
+            }
+        }
     }
 
-    useEffect(() => {
-      setProjectName("")
-      setGithubRepositoryURL("")
-      setSonarRepositoryURL("")
-    }, [open])
-    
     return (
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">Create Project</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              To create a project, please enter the project name and the repository URL you want to subscribe here.
-            </DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="ProjectName"
-              label="Project Name"
-              type="text"
-              fullWidth
-              onChange = {(e) => {setProjectName(e.target.value)}}
-            />
-            <TextField
-              margin="dense"
-              id="GithubRepositoryURL"
-              label="Github Repository URL"
-              type="text"
-              fullWidth
-              onChange = {(e) => {setGithubRepositoryURL(e.target.value)}}
-              required
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SiGithub />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            
-            <TextField
-              margin="dense"
-              id="SonarRepositoryURL"
-              label="Sonar Repository URL"
-              type="text"
-              fullWidth
-              onChange = {(e) => {setSonarRepositoryURL(e.target.value)}}
-              required
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SiSonarqube />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <GitlabOauth />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} color="secondary">
-              Cancel
-            </Button>
-            <Button id="CreateProjectBtn" onClick={createProject} color="primary">
-              Create
-            </Button>
-          </DialogActions>
+        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <DialogContent style={{ overflow: "auto" }}>
+                <DialogTitle id="form-dialog-title">Create Project</DialogTitle>
+                {step === 0 &&
+                    <List>
+                        {
+                            loginData.map((val, idx) => {
+                                return (
+                                    <ListItemButton onClick={() => handleLogin(idx)}>
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                {val.icon}
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText primary={val.text} />
+                                        {loading && circularProgressIndex === idx && (
+                                            <CircularProgress
+                                                size={24}
+                                                sx={{
+                                                    color: green[500],
+                                                    position: 'absolute',
+                                                    top: '50%',
+                                                    left: '50%',
+                                                    marginTop: '-12px',
+                                                    marginLeft: '-12px',
+                                                }} />
+                                        )}
+                                    </ListItemButton>
+                                )
+                            })
+                        }
+                    </List>}
+                {step === 1 &&
+                    <Box>
+                        <Card>
+                            <CardActionArea>
+                                <IconButton color="primary" disabled>
+                                    <Add />
+                                </IconButton>
+                            </CardActionArea>
+                        </Card>
+                        {data}
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={openMenu}
+                            onClose={handleClosing}>
+                            <MenuItem onClick={handleEditName}><Edit /> Edit</MenuItem>
+                            <MenuItem onClick={handleClosing}><Delete />Delete</MenuItem>
+                        </Menu>
+                    </Box>
+                }
+            </DialogContent>
         </Dialog>
     )
-  }
-  
+}

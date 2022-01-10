@@ -1,0 +1,8 @@
+package io.github.xriza.pvs.app.dto;
+
+import lombok.Data;
+
+@Data
+public class GitHubTokenDTO {
+    private String token;
+}

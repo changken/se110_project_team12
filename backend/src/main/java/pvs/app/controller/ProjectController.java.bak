@@ -11,8 +11,6 @@ import pvs.app.dto.AddGithubRepositoryDTO;
 import pvs.app.dto.AddSonarRepositoryDTO;
 import pvs.app.dto.CreateProjectDTO;
 import pvs.app.dto.ResponseProjectDTO;
-import pvs.app.dto.GitHubTokenDTO;
-import pvs.app.dto.GitHubRepoNameUpdateDTO;
 import pvs.app.service.ProjectService;
 import pvs.app.service.RepositoryService;
 

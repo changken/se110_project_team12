@@ -8,7 +8,6 @@ import CodeCoveragePage from '../App/component/CodeCoveragePage';
 import BugsPage from '../App/component/BugsPage';
 import CodeSmellsPage from '../App/component/CodeSmellsPage';
 import DuplicationsPage from '../App/component/DuplicationsPage';
-import GithubAuthorize from '../App/component/GithubAuthorize';
 import GitlabOauthRedirect from '../App/component/GitlabOauthRedirect';
 import GitlabCommitsPage from '../App/component/GitlabCommitsPage';
 import GitlabIssuesPage from '../App/component/GitlabIssuesPage';
@@ -24,7 +23,6 @@ const routes = [
   { path: '/commits', component: CommitsPage, loginRequired: true },
   { path: '/issues', component: IssuesPage, loginRequired: true },
   { path: '/codebase', component: CodeBasePage, loginRequired: true },
-  { path: '/oauth-callback/github', component: GithubAuthorize, loginRequired: true},
   {
     path: '/gitlabcommits/:id',
     component: GitlabCommitsPage,

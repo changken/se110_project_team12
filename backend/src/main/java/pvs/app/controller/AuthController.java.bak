@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pvs.app.dto.MemberDTO;
-import pvs.app.dto.GithubLoginDTO;
 import pvs.app.service.AuthService;
 
 @RestController

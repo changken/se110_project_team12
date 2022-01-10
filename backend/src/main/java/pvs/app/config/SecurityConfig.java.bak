@@ -70,8 +70,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //OPTIONS請求全部放行
                 .antMatchers( HttpMethod.OPTIONS, "/**").permitAll()
                 //登入介面放行
-				.antMatchers("/auth/github").permitAll()
-                .antMatchers("/oauth/github/repos/update").permitAll()
                 .antMatchers("/auth/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/member").permitAll()
                 .antMatchers("/project/**", "/github/**", "/sonar/**").hasAuthority("USER")
