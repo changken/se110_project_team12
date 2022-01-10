@@ -32,7 +32,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private JwtTokenUtil jwtTokenUtil;
 
     /**
-     * 存放Token的Header Key
+     * 存放 Token 的 Header Key
      */
     public static final String HEADER_STRING = "Authorization";
 

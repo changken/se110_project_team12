@@ -31,7 +31,7 @@ public class Member implements UserDetails {
     private Set<Role> authorities;
 
     /**
-     * 用户账号是否过期
+     * 使用者帳號是否過期
      */
     @Override
     public boolean isAccountNonExpired() {
@@ -39,7 +39,7 @@ public class Member implements UserDetails {
     }
 
     /**
-     * 用户账号是否被锁定
+     * 使用者帳號是否鎖定
      */
     @Override
     public boolean isAccountNonLocked() {
@@ -47,7 +47,7 @@ public class Member implements UserDetails {
     }
 
     /**
-     * 用户密码是否过期
+     * 使用者密碼是否過期
      */
     @Override
     public boolean isCredentialsNonExpired() {
@@ -55,7 +55,7 @@ public class Member implements UserDetails {
     }
 
     /**
-     * 用户是否可用
+     * 使用者是否可用
      */
     @Override
     public boolean isEnabled() {

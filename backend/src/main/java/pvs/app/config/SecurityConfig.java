@@ -77,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .oauth2Login();
 //                .defaultSuccessUrl(frontendRedirectUrl);
 
-        //使用自定義的 Token過濾器 驗證請求的Token是否合法
+        //使用自定義的 Token過濾器 驗證請求的 Token 是否合法
         http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
         http.headers().cacheControl();
     }
