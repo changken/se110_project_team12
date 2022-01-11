@@ -54,12 +54,14 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
       icon: <SiJenkins />,
     },
   ];
+
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
     setSelectCard(event.currentTarget.id);
   };
 
   const handleEditName = () => {
+    setAnchorEl(null);
     let text = prompt('請輸入修改的名稱', selectCard);
     let name;
     name = text === null || text === '' ? selectCard : text;
@@ -73,10 +75,8 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
     axios
       .post('http://localhost:9100/pvs-api/oauth/github/repos/update', payload)
       .then((res) => {
-        let payload = {
+        payload = {
           token: localStorage.getItem('token'),
-          beforeName: selectCard,
-          afterName: name,
         };
         axios.post('http://localhost:9100/pvs-api/oauth/github/repos', payload
         ).then((res) => {
@@ -151,6 +151,92 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
       });
   };
 
+  const handleDelete = () => {
+    setAnchorEl(null);
+    let payload = {
+      token: localStorage.getItem('token'),
+      name: selectCard
+    };
+
+    axios
+      .post('http://localhost:9100/pvs-api/oauth/github/repos/delete', payload)
+      .then((res) => {
+        payload = {
+          token: localStorage.getItem('token'),
+        };
+        axios.post('http://localhost:9100/pvs-api/oauth/github/repos', payload
+        ).then((res) => {
+          setData([])
+          var response = res.data;
+          let newData = [...data];
+          for (var i = 0; i < response.length; i += 2) {
+            newData.push(
+              <List component={Stack} direction="row">
+                <Card
+                  sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
+                >
+                  <CardHeader
+                    avatar={
+                      <Avatar aria-label="recipe">
+                        {response[i].name[0]}
+                      </Avatar>
+                    }
+                    title={response[i].name}
+                    action={
+                      <IconButton
+                        id={response[i].name}
+                        onClick={handleClick}
+                      >
+                        <MoreVert />
+                      </IconButton>
+                    }
+                  ></CardHeader>
+                  <CardContent>
+                    {response[i].description ??
+                      'No description, website, or topics provided.'}
+                  </CardContent>
+                  <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
+                </Card>
+                {i + 1 < response.length && (
+                  <Card
+                    sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
+                  >
+                    <CardHeader
+                      avatar={
+                        <Avatar aria-label="recipe">
+                          {response[i + 1].name[0]}
+                        </Avatar>
+                      }
+                      title={response[i + 1].name}
+                      action={
+                        <IconButton
+                          id={response[i + 1].name}
+                          onClick={handleClick}
+                        >
+                          <MoreVert />
+                        </IconButton>
+                      }
+                    ></CardHeader>
+                    <CardContent>
+                      {response[i + 1].description ??
+                        'No description, website, or topics provided.'}
+                    </CardContent>
+                    <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
+                  </Card>
+                )}
+              </List>
+            )
+          }
+          setData(newData);
+        }).catch(err => {
+          console.log('err');
+        })
+      })
+      .catch(err => {
+        console.log('err');
+      });
+  }
+
   const handleClosing = event => {
     setAnchorEl(null);
   };
@@ -196,7 +282,7 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
               token: localStorage.getItem('token'),
             };
             axios
-              .post('http://localhost:8080/oauth/github/repos', payload)
+              .post('http://localhost:9100/pvs-api/oauth/github/repos', payload)
               .then(res => {
                 var response = res.data;
                 let newData = [...data];
@@ -330,9 +416,8 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
               <MenuItem onClick={handleEditName}>
                 <Edit /> Edit
               </MenuItem>
-              <MenuItem onClick={handleClosing}>
-                <Delete />
-                Delete
+              <MenuItem onClick={handleDelete}>
+                <Delete /> Delete
               </MenuItem>
             </Menu>
           </Box>

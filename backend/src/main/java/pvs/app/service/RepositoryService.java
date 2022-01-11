@@ -82,7 +82,7 @@ public class RepositoryService {
                 .block();
     }
 
-    public String UpdateARepo(GitHubRepoNameUpdateDTO gitHubRepoNameUpdateDTO) {
+    public String UpdateARepoForTheOAuth(GitHubRepoNameUpdateDTO gitHubRepoNameUpdateDTO) {
         Map<String, String> reqParameters = new HashMap<>();
         reqParameters.put("name", gitHubRepoNameUpdateDTO.getBeforeName());
 
@@ -97,5 +97,18 @@ public class RepositoryService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-    }	
+    }
+
+    public String DeleteARepoOAuth(GitHubRepoDeleteDTO gitHubDeleteDTO) {
+        Map<String, String> reqParameters = new HashMap<>();
+        reqParameters.put("name", gitHubDeleteDTO.getName());
+
+        return webClient2.delete()
+                .uri("/repos/xriza/{name}", reqParameters)
+                .accept(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, String.format("token %s", gitHubDeleteDTO.getToken()))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }    
 }
