@@ -26,7 +26,7 @@ import { Add, Delete, Edit, MoreVert } from '@mui/icons-material';
 import axios from 'axios';
 import GitlabOauth from './GitlabOauth';
 
-export default function AddProjectDialog({ open, handleClose }) {
+export default function AddProjectDialog({ open, reloadProjects, handleClose }) {
   const [gitlabShow, setGitlabShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -111,7 +111,7 @@ export default function AddProjectDialog({ open, handleClose }) {
                     {response[i].description ??
                       'No description, website, or topics provided.'}
                   </CardContent>
-                  <Button variant="text">選擇</Button>
+                  <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
                 </Card>
                 {i + 1 < response.length && (
                   <Card
@@ -137,7 +137,7 @@ export default function AddProjectDialog({ open, handleClose }) {
                       {response[i + 1].description ??
                         'No description, website, or topics provided.'}
                     </CardContent>
-                    <Button variant="text">選擇</Button>
+                    <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
                   </Card>
                 )}
               </List>
@@ -156,6 +156,21 @@ export default function AddProjectDialog({ open, handleClose }) {
   const handleClosing = event => {
     setAnchorEl(null);
   };
+
+  const createProject = event => {
+    let payload = {
+      projectName: projectName,
+      githubRepositoryURL: event.currentTarget.id,
+      sonarRepositoryURL: ""
+    }
+    axios.post("http://localhost:8080/project", payload
+    ).then((res) => {
+      reloadProjects()
+      handleClose()
+    }).catch((err) => {
+      console.log("err");
+    })
+  }
 
   const handleLogin = index => {
     if (index >= 0 && index <= 4) {
@@ -214,7 +229,7 @@ export default function AddProjectDialog({ open, handleClose }) {
                           {response[i].description ??
                             'No description, website, or topics provided.'}
                         </CardContent>
-                        <Button variant="text">選擇</Button>
+                        <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
                       </Card>
                       {i + 1 < response.length && (
                         <Card
@@ -240,7 +255,7 @@ export default function AddProjectDialog({ open, handleClose }) {
                             {response[i + 1].description ??
                               'No description, website, or topics provided.'}
                           </CardContent>
-                          <Button variant="text">選擇</Button>
+                          <Button id={response[i + 1].html_url} variant="text" onClick={createProject}>選擇</Button>
                         </Card>
                       )}
                     </List>
