@@ -71,32 +71,82 @@ export default function AddProjectDialog({ open, handleClose }) {
       afterName: name,
     };
 
-    console.log(payload);
-
     axios
       .post(host, payload)
-      .then(res => {
-        var response = res.data;
-        let newData = [...data];
-        console.log(newData);
-        for (var i = 0; i < newData.length; i++) {
-          var d = newData[i];
-          console.log(d.props.children[0].props.children[0].props.title);
-          console.log(d.props.children[1].props.children[0].props.title);
-          if (
-            d.props.children[0].props.children[0].props.title === selectCard
-          ) {
-            d.props.children[0].props.children[0].props.title = response.name;
-            break;
-          } else if (
-            d.props.children[1].props.children[0].props.title === selectCard
-          ) {
-            d.props.children[1].props.children[0].props.title = response.name;
-            break;
+      .then((res) => {
+        const host = 'http://localhost:8080/oauth/github/repos';
+        let payload = {
+          token: localStorage.getItem('token'),
+          beforeName: selectCard,
+          afterName: name,
+        };
+        axios.post(host, payload
+        ).then((res) => {
+          setData([])
+          var response = res.data;
+          let newData = [...data];
+          for (var i = 0; i < response.length; i += 2) {
+            newData.push(
+              <List component={Stack} direction="row">
+                <Card
+                  sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
+                >
+                  <CardHeader
+                    avatar={
+                      <Avatar aria-label="recipe">
+                        {response[i].name[0]}
+                      </Avatar>
+                    }
+                    title={response[i].name}
+                    action={
+                      <IconButton
+                        id={response[i].name}
+                        onClick={handleClick}
+                      >
+                        <MoreVert />
+                      </IconButton>
+                    }
+                  ></CardHeader>
+                  <CardContent>
+                    {response[i].description ??
+                      'No description, website, or topics provided.'}
+                  </CardContent>
+                  <Button variant="text">選擇</Button>
+                </Card>
+                {i + 1 < response.length && (
+                  <Card
+                    sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
+                  >
+                    <CardHeader
+                      avatar={
+                        <Avatar aria-label="recipe">
+                          {response[i + 1].name[0]}
+                        </Avatar>
+                      }
+                      title={response[i + 1].name}
+                      action={
+                        <IconButton
+                          id={response[i + 1].name}
+                          onClick={handleClick}
+                        >
+                          <MoreVert />
+                        </IconButton>
+                      }
+                    ></CardHeader>
+                    <CardContent>
+                      {response[i + 1].description ??
+                        'No description, website, or topics provided.'}
+                    </CardContent>
+                    <Button variant="text">選擇</Button>
+                  </Card>
+                )}
+              </List>
+            )
           }
-        }
-        console.log(newData);
-        setData(newData);
+          setData(newData);
+        }).catch(err => {
+          console.log('err');
+        })
       })
       .catch(err => {
         console.log('err');
@@ -104,8 +154,6 @@ export default function AddProjectDialog({ open, handleClose }) {
   };
 
   const handleClosing = event => {
-    // console.log(event)
-    // console.log(event.currentTarget)
     setAnchorEl(null);
   };
 
