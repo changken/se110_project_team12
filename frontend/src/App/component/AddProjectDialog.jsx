@@ -26,7 +26,7 @@ import { Add, Delete, Edit, MoreVert } from '@mui/icons-material';
 import axios from 'axios';
 import GitlabOauth from './GitlabOauth';
 
-export default function AddProjectDialog({ open, handleClose }) {
+export default function AddProjectDialog({ open, reloadProjects, handleClose }) {
   const [gitlabShow, setGitlabShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -54,13 +54,14 @@ export default function AddProjectDialog({ open, handleClose }) {
       icon: <SiJenkins />,
     },
   ];
+
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
     setSelectCard(event.currentTarget.id);
   };
 
   const handleEditName = () => {
-    const host = 'http://localhost:8080/oauth/github/repos/update';
+    setAnchorEl(null);
     let text = prompt('請輸入修改的名稱', selectCard);
     let name;
     name = text === null || text === '' ? selectCard : text;
@@ -71,43 +72,190 @@ export default function AddProjectDialog({ open, handleClose }) {
       afterName: name,
     };
 
-    console.log(payload);
-
     axios
-      .post(host, payload)
-      .then(res => {
-        var response = res.data;
-        let newData = [...data];
-        console.log(newData);
-        for (var i = 0; i < newData.length; i++) {
-          var d = newData[i];
-          console.log(d.props.children[0].props.children[0].props.title);
-          console.log(d.props.children[1].props.children[0].props.title);
-          if (
-            d.props.children[0].props.children[0].props.title === selectCard
-          ) {
-            d.props.children[0].props.children[0].props.title = response.name;
-            break;
-          } else if (
-            d.props.children[1].props.children[0].props.title === selectCard
-          ) {
-            d.props.children[1].props.children[0].props.title = response.name;
-            break;
+      .post('http://localhost:9100/pvs-api/oauth/github/repos/update', payload)
+      .then((res) => {
+        payload = {
+          token: localStorage.getItem('token'),
+        };
+        axios.post('http://localhost:9100/pvs-api/oauth/github/repos', payload
+        ).then((res) => {
+          setData([])
+          var response = res.data;
+          let newData = [...data];
+          for (var i = 0; i < response.length; i += 2) {
+            newData.push(
+              <List component={Stack} direction="row">
+                <Card
+                  sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
+                >
+                  <CardHeader
+                    avatar={
+                      <Avatar aria-label="recipe">
+                        {response[i].name[0]}
+                      </Avatar>
+                    }
+                    title={response[i].name}
+                    action={
+                      <IconButton
+                        id={response[i].name}
+                        onClick={handleClick}
+                      >
+                        <MoreVert />
+                      </IconButton>
+                    }
+                  ></CardHeader>
+                  <CardContent>
+                    {response[i].description ??
+                      'No description, website, or topics provided.'}
+                  </CardContent>
+                  <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
+                </Card>
+                {i + 1 < response.length && (
+                  <Card
+                    sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
+                  >
+                    <CardHeader
+                      avatar={
+                        <Avatar aria-label="recipe">
+                          {response[i + 1].name[0]}
+                        </Avatar>
+                      }
+                      title={response[i + 1].name}
+                      action={
+                        <IconButton
+                          id={response[i + 1].name}
+                          onClick={handleClick}
+                        >
+                          <MoreVert />
+                        </IconButton>
+                      }
+                    ></CardHeader>
+                    <CardContent>
+                      {response[i + 1].description ??
+                        'No description, website, or topics provided.'}
+                    </CardContent>
+                    <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
+                  </Card>
+                )}
+              </List>
+            )
           }
-        }
-        console.log(newData);
-        setData(newData);
+          setData(newData);
+        }).catch(err => {
+          console.log('err');
+        })
       })
       .catch(err => {
         console.log('err');
       });
   };
 
+  const handleDelete = () => {
+    setAnchorEl(null);
+    let payload = {
+      token: localStorage.getItem('token'),
+      name: selectCard
+    };
+
+    axios
+      .post('http://localhost:9100/pvs-api/oauth/github/repos/delete', payload)
+      .then((res) => {
+        payload = {
+          token: localStorage.getItem('token'),
+        };
+        axios.post('http://localhost:9100/pvs-api/oauth/github/repos', payload
+        ).then((res) => {
+          setData([])
+          var response = res.data;
+          let newData = [...data];
+          for (var i = 0; i < response.length; i += 2) {
+            newData.push(
+              <List component={Stack} direction="row">
+                <Card
+                  sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
+                >
+                  <CardHeader
+                    avatar={
+                      <Avatar aria-label="recipe">
+                        {response[i].name[0]}
+                      </Avatar>
+                    }
+                    title={response[i].name}
+                    action={
+                      <IconButton
+                        id={response[i].name}
+                        onClick={handleClick}
+                      >
+                        <MoreVert />
+                      </IconButton>
+                    }
+                  ></CardHeader>
+                  <CardContent>
+                    {response[i].description ??
+                      'No description, website, or topics provided.'}
+                  </CardContent>
+                  <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
+                </Card>
+                {i + 1 < response.length && (
+                  <Card
+                    sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
+                  >
+                    <CardHeader
+                      avatar={
+                        <Avatar aria-label="recipe">
+                          {response[i + 1].name[0]}
+                        </Avatar>
+                      }
+                      title={response[i + 1].name}
+                      action={
+                        <IconButton
+                          id={response[i + 1].name}
+                          onClick={handleClick}
+                        >
+                          <MoreVert />
+                        </IconButton>
+                      }
+                    ></CardHeader>
+                    <CardContent>
+                      {response[i + 1].description ??
+                        'No description, website, or topics provided.'}
+                    </CardContent>
+                    <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
+                  </Card>
+                )}
+              </List>
+            )
+          }
+          setData(newData);
+        }).catch(err => {
+          console.log('err');
+        })
+      })
+      .catch(err => {
+        console.log('err');
+      });
+  }
+
   const handleClosing = event => {
-    // console.log(event)
-    // console.log(event.currentTarget)
     setAnchorEl(null);
   };
+
+  const createProject = event => {
+    let payload = {
+      projectName: projectName,
+      githubRepositoryURL: event.currentTarget.id,
+      sonarRepositoryURL: ""
+    }
+    axios.post("http://localhost:9100/pvs-api/project", payload,
+      { headers: { "Authorization": `${jwtToken}` } })
+      .then((res) => {
+        reloadProjects()
+        handleClose()
+      }).catch((err) => {
+        console.log("err");
+      })
+  }
 
   const handleLogin = index => {
     if (index >= 0 && index <= 4) {
@@ -131,12 +279,11 @@ export default function AddProjectDialog({ open, handleClose }) {
             setSuccess(true);
             setLoading(false);
             setStep(1);
-            const host = 'http://localhost:8080/oauth/github/repos';
             let payload = {
               token: localStorage.getItem('token'),
             };
             axios
-              .post(host, payload)
+              .post('http://localhost:9100/pvs-api/oauth/github/repos', payload)
               .then(res => {
                 var response = res.data;
                 let newData = [...data];
@@ -166,7 +313,7 @@ export default function AddProjectDialog({ open, handleClose }) {
                           {response[i].description ??
                             'No description, website, or topics provided.'}
                         </CardContent>
-                        <Button variant="text">選擇</Button>
+                        <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
                       </Card>
                       {i + 1 < response.length && (
                         <Card
@@ -192,7 +339,7 @@ export default function AddProjectDialog({ open, handleClose }) {
                             {response[i + 1].description ??
                               'No description, website, or topics provided.'}
                           </CardContent>
-                          <Button variant="text">選擇</Button>
+                          <Button id={response[i + 1].html_url} variant="text" onClick={createProject}>選擇</Button>
                         </Card>
                       )}
                     </List>
@@ -270,9 +417,8 @@ export default function AddProjectDialog({ open, handleClose }) {
               <MenuItem onClick={handleEditName}>
                 <Edit /> Edit
               </MenuItem>
-              <MenuItem onClick={handleClosing}>
-                <Delete />
-                Delete
+              <MenuItem onClick={handleDelete}>
+                <Delete /> Delete
               </MenuItem>
             </Menu>
           </Box>

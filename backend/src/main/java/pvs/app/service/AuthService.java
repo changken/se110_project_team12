@@ -31,9 +31,9 @@ public class AuthService {
 	
     private final String url = "https://github.com";
 	
-    private final String clientId = "";
+    private final String clientId = "4c08f6a53bf874e1c230";
 	
-    private final String clientSecret = "";	
+    private final String clientSecret = "f02452c7aa59023efb2922d99e5406e4998704bb";	
 
     AuthService(AuthenticationManager authenticationManager,
                 @Qualifier("userDetailsServiceImpl")UserDetailsService userDetailsService,

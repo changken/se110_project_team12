@@ -13,6 +13,7 @@ import pvs.app.dto.CreateProjectDTO;
 import pvs.app.dto.ResponseProjectDTO;
 import pvs.app.dto.GitHubTokenDTO;
 import pvs.app.dto.GitHubRepoNameUpdateDTO;
+import pvs.app.dto.GitHubRepoDeleteDTO;
 import pvs.app.service.ProjectService;
 import pvs.app.service.RepositoryService;
 
@@ -151,7 +152,12 @@ public class ProjectController {
     }
 
     @PostMapping("/oauth/github/repos/update")
-    public String UpdateARepo(@RequestBody GitHubRepoNameUpdateDTO gitHubRepoNameUpdateDTO) {
-        return repositoryService.UpdateARepo(gitHubRepoNameUpdateDTO);
-    }	
+    public String UpdateARepoOAuth(@RequestBody GitHubRepoNameUpdateDTO gitHubRepoNameUpdateDTO) {
+        return repositoryService.UpdateARepoForTheOAuth(gitHubRepoNameUpdateDTO);
+    }
+
+    @PostMapping("/oauth/github/repos/delete")
+    public String DeleteARepoOAuth(@RequestBody GitHubRepoDeleteDTO gitHubDeleteDTO) {
+        return repositoryService.DeleteARepoForTheOAuth(gitHubDeleteDTO);
+    }
 }
