@@ -17,6 +17,11 @@ function GitlabOauthRedirect(props) {
       headers: { Authorization: `Bearer ${access_token}` },
     });
     dispatch(getUsername(res.data.username));
+
+    setTimeout(() => {
+      //一秒後關閉視窗
+      window.close();
+    }, 1000);
   }, []);
   return (
     <div>

@@ -6,7 +6,11 @@ import ShowGitlabRepo from './ShowGitlabRepo';
 function GitlabOauth(props) {
   const state = useSelector(state => state.oauth);
 
-  const onSuccess = response => alert(response);
+  const onSuccess = response => {
+    alert(response);
+    //當gitlab oauth success reload page!
+    window.location.reload();
+  };
   const onFailure = response => console.error(response);
 
   return (

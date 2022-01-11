@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.reactive.function.client.WebClient;
 import pvs.app.Application;
 import pvs.app.entity.Member;
 import pvs.app.entity.Role;
@@ -37,12 +38,15 @@ public class AuthServiceTest {
     @MockBean
     private JwtTokenUtil jwtTokenUtil;
 
+    @Autowired
+    private WebClient.Builder webClientBuilder;
+
     private Member member;
 
     @Before
     public void setup() throws IOException {
         this.authService = new AuthService(authenticationManager,
-                userDetailsService, jwtTokenUtil);
+                userDetailsService, jwtTokenUtil, webClientBuilder);
 
         member = new Member();
         Role userRole = new Role();

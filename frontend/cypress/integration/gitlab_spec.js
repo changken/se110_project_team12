@@ -17,7 +17,7 @@ Cypress.Commands.add('restoreLocalStorage', () => {
   });
 });
 
-describe('test login', () => {
+describe('test gitlab', () => {
   beforeEach(() => {
     cy.wait(2000); //等兩秒
     cy.restoreLocalStorage();
@@ -39,10 +39,12 @@ describe('test login', () => {
   });
 
   it("gitlab list user's repository test", () => {
-    cy.visit('http://localhost:3001/select');
+    // cy.visit('http://localhost:3001/select');
 
     //click add project
-    cy.get('.MuiButtonBase-root.MuiCardActionArea-root').click();
+    cy.get('#create-project-card').click();
+
+    cy.contains('GitLab Login').click();
 
     cy.contains('You had already login Gitlab!');
     cy.contains('Your currently login username is changken');
@@ -69,11 +71,15 @@ describe('test login', () => {
   it('gitlab issue page test', () => {
     cy.contains('Issue').click();
 
+    cy.url().should('include', 'gitlabissues');
+
     cy.contains('Team');
   });
 
   it('gitlab code base page test', () => {
     cy.contains('Code Base').click();
+
+    cy.url().should('include', 'gitlabcodebase');
 
     cy.contains('Team');
   });
@@ -81,11 +87,15 @@ describe('test login', () => {
   it('gitlab merge request page test', () => {
     cy.contains('Merge Request').click();
 
+    cy.url().should('include', 'gitlabmr');
+
     cy.contains('Merge Request');
   });
 
   it('gitlab branch page test', () => {
     cy.contains('Branch').click();
+
+    cy.url().should('include', 'gitlabbranch');
 
     cy.contains('Branch which last committed at');
   });
