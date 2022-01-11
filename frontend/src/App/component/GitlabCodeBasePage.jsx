@@ -7,6 +7,7 @@ import moment from 'moment';
 import { CircularProgress, Backdrop } from '@material-ui/core';
 import { connect, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { countCodebase } from './gitlab/codebaseUtils';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -99,39 +100,8 @@ function GitlabCodeBasePage(prop) {
   useEffect(() => {
     const { startMonth, endMonth } = prop;
 
-    let chartDataset = { labels: [], data: { additions: [], deletions: [] } };
-    for (
-      let month = moment(startMonth);
-      month <= moment(endMonth);
-      month = month.add(1, 'months')
-    ) {
-      chartDataset.labels.push(month.format('YYYY-MM'));
+    let chartDataset = countCodebase(commitListData, startMonth, endMonth);
 
-      chartDataset.data.additions.push(
-        commitListData
-          .filter(commit => {
-            return (
-              moment(commit.committed_date).format('YYYY-MM') ==
-              month.format('YYYY-MM')
-            );
-          })
-          .reduce(function (additionSum, currentCommit) {
-            return additionSum + currentCommit.stats.additions;
-          }, 0)
-      );
-      chartDataset.data.deletions.push(
-        commitListData
-          .filter(commit => {
-            return (
-              moment(commit.committed_date).format('YYYY-MM') ==
-              month.format('YYYY-MM')
-            );
-          })
-          .reduce(function (deletionSum, currentCommit) {
-            return deletionSum - currentCommit.stats.deletions;
-          }, 0)
-      );
-    }
     setDataForCodeBaseChart(chartDataset);
   }, [commitListData, prop.startMonth, prop.endMonth]);
 

@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core';
 import { connect, useSelector } from 'react-redux';
 import { Redirect, useParams } from 'react-router-dom';
+import { countCommitsByMember, countCommitsByTeam } from './gitlab/commitUtils';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -103,22 +104,7 @@ function GitlabCommitsPage(prop) {
   useEffect(() => {
     const { startMonth, endMonth } = prop;
 
-    let chartDataset = { labels: [], data: { team: [] } };
-    for (
-      let month = moment(startMonth);
-      month <= moment(endMonth);
-      month = month.add(1, 'months')
-    ) {
-      chartDataset.labels.push(month.format('YYYY-MM'));
-      chartDataset.data.team.push(
-        commitListData.filter(commit => {
-          return (
-            moment(commit.committed_date).format('YYYY-MM') ==
-            month.format('YYYY-MM')
-          );
-        }).length
-      );
-    }
+    let chartDataset = countCommitsByTeam(commitListData, startMonth, endMonth);
 
     setDataForTeamCommitChart(chartDataset);
   }, [commitListData, prop.startMonth, prop.endMonth]);
@@ -126,48 +112,13 @@ function GitlabCommitsPage(prop) {
   useEffect(() => {
     const { startMonth, endMonth } = prop;
 
-    let chartDataset = {
-      labels: [],
-      data: {},
-    };
-    new Set(commitListData.map(commit => commit.author_name)).forEach(
-      author => {
-        chartDataset.data[author] = [];
-      }
+    let chartDataset = countCommitsByMember(
+      commitListData,
+      startMonth,
+      endMonth,
+      numberOfMember
     );
-    for (
-      let month = moment(startMonth);
-      month <= moment(endMonth);
-      month = month.add(1, 'months')
-    ) {
-      chartDataset.labels.push(month.format('YYYY-MM'));
-      for (var key in chartDataset.data) {
-        chartDataset.data[key].push(0);
-      }
-      commitListData.forEach(commitData => {
-        if (
-          moment(commitData.committed_date).format('YYYY-MM') ==
-          month.format('YYYY-MM')
-        ) {
-          chartDataset.data[commitData.author_name][
-            chartDataset.labels.length - 1
-          ] += 1;
-        }
-      });
-    }
-    let temp = Object.keys(chartDataset.data).map(key => [
-      key,
-      chartDataset.data[key],
-    ]);
-    temp.sort(
-      (first, second) =>
-        second[1].reduce((a, b) => a + b) - first[1].reduce((a, b) => a + b)
-    );
-    let result = {};
-    temp.slice(0, numberOfMember).forEach(x => {
-      result[x[0]] = x[1];
-    });
-    chartDataset.data = result;
+
     setDataForMemberCommitChart(chartDataset);
   }, [commitListData, prop.startMonth, prop.endMonth, numberOfMember]);
 

@@ -7,6 +7,7 @@ import moment from 'moment';
 import { CircularProgress, Backdrop } from '@material-ui/core';
 import { connect, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { countMergeRequest } from './gitlab/mergeRequestUtils';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -93,44 +94,9 @@ function GitlabMergeRequestPage(prop) {
 
   useEffect(() => {
     const { endMonth } = prop;
-    let chartDataset = { labels: [], data: { created: [], merged: [] } };
-    let mrListDataSortedByCreatedAt = mrListData;
-    let mrListDataSortedByMergedAt = mrListData;
 
-    mrListDataSortedByCreatedAt.sort((a, b) => a.created_at - b.created_at);
-    mrListDataSortedByMergedAt.sort((a, b) => a.merged_at - b.merged_at);
+    let chartDataset = countMergeRequest(mrListData, endMonth);
 
-    //當mrListData有資料的時候
-    if (mrListDataSortedByCreatedAt.length > 0) {
-      for (
-        let month = moment(mrListDataSortedByCreatedAt[0].created_at);
-        month <= moment(endMonth).add(1, 'months');
-        month = month.add(1, 'months')
-      ) {
-        let index;
-        chartDataset.labels.push(month.format('YYYY-MM'));
-
-        index = mrListDataSortedByCreatedAt.findIndex(mr => {
-          return (
-            moment(mr.created_at).year() > month.year() ||
-            (moment(mr.created_at).year() == month.year() &&
-              moment(mr.created_at).month() > month.month())
-          );
-        });
-        chartDataset.data.created.push(index == -1 ? mrListData.length : index);
-
-        //聚合merged_at
-        index = mrListDataSortedByMergedAt.findIndex(mr => {
-          return (
-            moment(mr.merged_at).year() > month.year() ||
-            (moment(mr.merged_at).year() == month.year() &&
-              moment(mr.merged_at).month() > month.month())
-          );
-        });
-        chartDataset.data.merged.push(index == -1 ? mrListData.length : index);
-      }
-    }
-    console.log(chartDataset);
     setDataForMrChart(chartDataset);
   }, [mrListData]);
 

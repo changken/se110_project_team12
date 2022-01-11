@@ -7,6 +7,7 @@ import moment from 'moment';
 import { CircularProgress, Backdrop } from '@material-ui/core';
 import { connect, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { countIssues } from './gitlab/issueUtils';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -93,46 +94,9 @@ function GitlabIssuesPage(prop) {
 
   useEffect(() => {
     const { endMonth } = prop;
-    let chartDataset = { labels: [], data: { created: [], closed: [] } };
-    let issueListDataSortedByCreatedAt = issueListData;
-    let issueListDataSortedByClosedAt = issueListData;
 
-    issueListDataSortedByCreatedAt.sort((a, b) => a.created_at - b.created_at);
-    issueListDataSortedByClosedAt.sort((a, b) => a.closed_at - b.closed_at);
+    let chartDataset = countIssues(issueListData, endMonth);
 
-    if (issueListDataSortedByCreatedAt.length > 0) {
-      for (
-        let month = moment(issueListDataSortedByCreatedAt[0].created_at);
-        month <= moment(endMonth).add(1, 'months');
-        month = month.add(1, 'months')
-      ) {
-        let index;
-        chartDataset.labels.push(month.format('YYYY-MM'));
-
-        index = issueListDataSortedByCreatedAt.findIndex(issue => {
-          return (
-            moment(issue.created_at).year() > month.year() ||
-            (moment(issue.created_at).year() == month.year() &&
-              moment(issue.created_at).month() > month.month())
-          );
-        });
-        chartDataset.data.created.push(
-          index == -1 ? issueListData.length : index
-        );
-
-        index = issueListDataSortedByClosedAt.findIndex(issue => {
-          return (
-            moment(issue.closed_at).year() > month.year() ||
-            (moment(issue.closed_at).year() == month.year() &&
-              moment(issue.closed_at).month() > month.month())
-          );
-        });
-        chartDataset.data.closed.push(
-          index == -1 ? issueListData.length : index
-        );
-      }
-    }
-    console.log(chartDataset);
     setDataForIssueChart(chartDataset);
   }, [issueListData]);
 
