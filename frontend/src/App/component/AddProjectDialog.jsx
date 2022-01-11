@@ -60,7 +60,6 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
   };
 
   const handleEditName = () => {
-    const host = 'http://localhost:8080/oauth/github/repos/update';
     let text = prompt('請輸入修改的名稱', selectCard);
     let name;
     name = text === null || text === '' ? selectCard : text;
@@ -72,15 +71,14 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
     };
 
     axios
-      .post(host, payload)
+      .post('http://localhost:9100/pvs-api/oauth/github/repos/update', payload)
       .then((res) => {
-        const host = 'http://localhost:8080/oauth/github/repos';
         let payload = {
           token: localStorage.getItem('token'),
           beforeName: selectCard,
           afterName: name,
         };
-        axios.post(host, payload
+        axios.post('http://localhost:9100/pvs-api/oauth/github/repos', payload
         ).then((res) => {
           setData([])
           var response = res.data;
@@ -163,7 +161,7 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
       githubRepositoryURL: event.currentTarget.id,
       sonarRepositoryURL: ""
     }
-    axios.post("http://localhost:8080/project", payload
+    axios.post("http://localhost:9100/pvs-api/project", payload
     ).then((res) => {
       reloadProjects()
       handleClose()
@@ -194,12 +192,11 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
             setSuccess(true);
             setLoading(false);
             setStep(1);
-            const host = 'http://localhost:8080/oauth/github/repos';
             let payload = {
               token: localStorage.getItem('token'),
             };
             axios
-              .post(host, payload)
+              .post('http://localhost:8080/oauth/github/repos', payload)
               .then(res => {
                 var response = res.data;
                 let newData = [...data];
