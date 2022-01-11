@@ -247,13 +247,14 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
       githubRepositoryURL: event.currentTarget.id,
       sonarRepositoryURL: ""
     }
-    axios.post("http://localhost:9100/pvs-api/project", payload
-    ).then((res) => {
-      reloadProjects()
-      handleClose()
-    }).catch((err) => {
-      console.log("err");
-    })
+    axios.post("http://localhost:9100/pvs-api/project", payload,
+      { headers: { "Authorization": `${jwtToken}` } })
+      .then((res) => {
+        reloadProjects()
+        handleClose()
+      }).catch((err) => {
+        console.log("err");
+      })
   }
 
   const handleLogin = index => {
