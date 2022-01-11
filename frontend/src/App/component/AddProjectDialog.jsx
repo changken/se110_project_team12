@@ -26,7 +26,11 @@ import { Add, Delete, Edit, MoreVert } from '@mui/icons-material';
 import axios from 'axios';
 import GitlabOauth from './GitlabOauth';
 
-export default function AddProjectDialog({ open, reloadProjects, handleClose }) {
+export default function AddProjectDialog({
+  open,
+  reloadProjects,
+  handleClose,
+}) {
   const [gitlabShow, setGitlabShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -36,6 +40,8 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
   const openMenu = Boolean(anchorEl);
   const [data, setData] = useState([]);
   const [selectCard, setSelectCard] = useState('');
+  const jwtToken = localStorage.getItem('jwtToken');
+
   const loginData = [
     {
       text: 'GitHub Login',
@@ -73,78 +79,95 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
     };
 
     axios
-      .post('http://localhost:9100/pvs-api/oauth/github/repos/update', payload)
-      .then((res) => {
+      .post(
+        'http://localhost:9100/pvs-api/oauth/github/repos/update',
+        payload,
+        {
+          headers: { Authorization: `${jwtToken}` },
+        }
+      )
+      .then(res => {
         payload = {
           token: localStorage.getItem('token'),
         };
-        axios.post('http://localhost:9100/pvs-api/oauth/github/repos', payload
-        ).then((res) => {
-          setData([])
-          var response = res.data;
-          let newData = [...data];
-          for (var i = 0; i < response.length; i += 2) {
-            newData.push(
-              <List component={Stack} direction="row">
-                <Card
-                  sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
-                >
-                  <CardHeader
-                    avatar={
-                      <Avatar aria-label="recipe">
-                        {response[i].name[0]}
-                      </Avatar>
-                    }
-                    title={response[i].name}
-                    action={
-                      <IconButton
-                        id={response[i].name}
-                        onClick={handleClick}
-                      >
-                        <MoreVert />
-                      </IconButton>
-                    }
-                  ></CardHeader>
-                  <CardContent>
-                    {response[i].description ??
-                      'No description, website, or topics provided.'}
-                  </CardContent>
-                  <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
-                </Card>
-                {i + 1 < response.length && (
-                  <Card
-                    sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
-                  >
+        axios
+          .post('http://localhost:9100/pvs-api/oauth/github/repos', payload, {
+            headers: { Authorization: `${jwtToken}` },
+          })
+          .then(res => {
+            setData([]);
+            var response = res.data;
+            let newData = [...data];
+            for (var i = 0; i < response.length; i += 2) {
+              newData.push(
+                <List component={Stack} direction="row">
+                  <Card sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}>
                     <CardHeader
                       avatar={
                         <Avatar aria-label="recipe">
-                          {response[i + 1].name[0]}
+                          {response[i].name[0]}
                         </Avatar>
                       }
-                      title={response[i + 1].name}
+                      title={response[i].name}
                       action={
-                        <IconButton
-                          id={response[i + 1].name}
-                          onClick={handleClick}
-                        >
+                        <IconButton id={response[i].name} onClick={handleClick}>
                           <MoreVert />
                         </IconButton>
                       }
                     ></CardHeader>
                     <CardContent>
-                      {response[i + 1].description ??
+                      {response[i].description ??
                         'No description, website, or topics provided.'}
                     </CardContent>
-                    <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
+                    <Button
+                      id={response[i].html_url}
+                      variant="text"
+                      onClick={createProject}
+                    >
+                      選擇
+                    </Button>
                   </Card>
-                )}
-              </List>
-            )
-          }
-          setData(newData);
-        }).catch(err => {
-          console.log('err');
-        })
+                  {i + 1 < response.length && (
+                    <Card
+                      sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
+                    >
+                      <CardHeader
+                        avatar={
+                          <Avatar aria-label="recipe">
+                            {response[i + 1].name[0]}
+                          </Avatar>
+                        }
+                        title={response[i + 1].name}
+                        action={
+                          <IconButton
+                            id={response[i + 1].name}
+                            onClick={handleClick}
+                          >
+                            <MoreVert />
+                          </IconButton>
+                        }
+                      ></CardHeader>
+                      <CardContent>
+                        {response[i + 1].description ??
+                          'No description, website, or topics provided.'}
+                      </CardContent>
+                      <Button
+                        id={response[i].html_url}
+                        variant="text"
+                        onClick={createProject}
+                      >
+                        選擇
+                      </Button>
+                    </Card>
+                  )}
+                </List>
+              );
+            }
+            setData(newData);
+          })
+          .catch(err => {
+            console.log('err');
+          });
       })
       .catch(err => {
         console.log('err');
@@ -155,87 +178,104 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
     setAnchorEl(null);
     let payload = {
       token: localStorage.getItem('token'),
-      name: selectCard
+      name: selectCard,
     };
 
     axios
-      .post('http://localhost:9100/pvs-api/oauth/github/repos/delete', payload)
-      .then((res) => {
+      .post(
+        'http://localhost:9100/pvs-api/oauth/github/repos/delete',
+        payload,
+        {
+          headers: { Authorization: `${jwtToken}` },
+        }
+      )
+      .then(res => {
         payload = {
           token: localStorage.getItem('token'),
         };
-        axios.post('http://localhost:9100/pvs-api/oauth/github/repos', payload
-        ).then((res) => {
-          setData([])
-          var response = res.data;
-          let newData = [...data];
-          for (var i = 0; i < response.length; i += 2) {
-            newData.push(
-              <List component={Stack} direction="row">
-                <Card
-                  sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
-                >
-                  <CardHeader
-                    avatar={
-                      <Avatar aria-label="recipe">
-                        {response[i].name[0]}
-                      </Avatar>
-                    }
-                    title={response[i].name}
-                    action={
-                      <IconButton
-                        id={response[i].name}
-                        onClick={handleClick}
-                      >
-                        <MoreVert />
-                      </IconButton>
-                    }
-                  ></CardHeader>
-                  <CardContent>
-                    {response[i].description ??
-                      'No description, website, or topics provided.'}
-                  </CardContent>
-                  <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
-                </Card>
-                {i + 1 < response.length && (
-                  <Card
-                    sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
-                  >
+        axios
+          .post('http://localhost:9100/pvs-api/oauth/github/repos', payload, {
+            headers: { Authorization: `${jwtToken}` },
+          })
+          .then(res => {
+            setData([]);
+            var response = res.data;
+            let newData = [...data];
+            for (var i = 0; i < response.length; i += 2) {
+              newData.push(
+                <List component={Stack} direction="row">
+                  <Card sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}>
                     <CardHeader
                       avatar={
                         <Avatar aria-label="recipe">
-                          {response[i + 1].name[0]}
+                          {response[i].name[0]}
                         </Avatar>
                       }
-                      title={response[i + 1].name}
+                      title={response[i].name}
                       action={
-                        <IconButton
-                          id={response[i + 1].name}
-                          onClick={handleClick}
-                        >
+                        <IconButton id={response[i].name} onClick={handleClick}>
                           <MoreVert />
                         </IconButton>
                       }
                     ></CardHeader>
                     <CardContent>
-                      {response[i + 1].description ??
+                      {response[i].description ??
                         'No description, website, or topics provided.'}
                     </CardContent>
-                    <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
+                    <Button
+                      id={response[i].html_url}
+                      variant="text"
+                      onClick={createProject}
+                    >
+                      選擇
+                    </Button>
                   </Card>
-                )}
-              </List>
-            )
-          }
-          setData(newData);
-        }).catch(err => {
-          console.log('err');
-        })
+                  {i + 1 < response.length && (
+                    <Card
+                      sx={{ width: 250, maxWidth: 400, overflow: 'scroll' }}
+                    >
+                      <CardHeader
+                        avatar={
+                          <Avatar aria-label="recipe">
+                            {response[i + 1].name[0]}
+                          </Avatar>
+                        }
+                        title={response[i + 1].name}
+                        action={
+                          <IconButton
+                            id={response[i + 1].name}
+                            onClick={handleClick}
+                          >
+                            <MoreVert />
+                          </IconButton>
+                        }
+                      ></CardHeader>
+                      <CardContent>
+                        {response[i + 1].description ??
+                          'No description, website, or topics provided.'}
+                      </CardContent>
+                      <Button
+                        id={response[i].html_url}
+                        variant="text"
+                        onClick={createProject}
+                      >
+                        選擇
+                      </Button>
+                    </Card>
+                  )}
+                </List>
+              );
+            }
+            setData(newData);
+          })
+          .catch(err => {
+            console.log('err');
+          });
       })
       .catch(err => {
         console.log('err');
       });
-  }
+  };
 
   const handleClosing = event => {
     setAnchorEl(null);
@@ -243,19 +283,22 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
 
   const createProject = event => {
     let payload = {
-      projectName: projectName,
+      projectName: selectCard,
       githubRepositoryURL: event.currentTarget.id,
-      sonarRepositoryURL: ""
-    }
-    axios.post("http://localhost:9100/pvs-api/project", payload,
-      { headers: { "Authorization": `${jwtToken}` } })
-      .then((res) => {
-        reloadProjects()
-        handleClose()
-      }).catch((err) => {
-        console.log("err");
+      sonarRepositoryURL: '',
+    };
+    axios
+      .post('http://localhost:9100/pvs-api/project', payload, {
+        headers: { Authorization: `${jwtToken}` },
       })
-  }
+      .then(res => {
+        reloadProjects();
+        handleClose();
+      })
+      .catch(err => {
+        console.log('err');
+      });
+  };
 
   const handleLogin = index => {
     if (index >= 0 && index <= 4) {
@@ -283,7 +326,13 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
               token: localStorage.getItem('token'),
             };
             axios
-              .post('http://localhost:9100/pvs-api/oauth/github/repos', payload)
+              .post(
+                'http://localhost:9100/pvs-api/oauth/github/repos',
+                payload,
+                {
+                  headers: { Authorization: `${jwtToken}` },
+                }
+              )
               .then(res => {
                 var response = res.data;
                 let newData = [...data];
@@ -313,7 +362,13 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
                           {response[i].description ??
                             'No description, website, or topics provided.'}
                         </CardContent>
-                        <Button id={response[i].html_url} variant="text" onClick={createProject}>選擇</Button>
+                        <Button
+                          id={response[i].html_url}
+                          variant="text"
+                          onClick={createProject}
+                        >
+                          選擇
+                        </Button>
                       </Card>
                       {i + 1 < response.length && (
                         <Card
@@ -339,7 +394,13 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
                             {response[i + 1].description ??
                               'No description, website, or topics provided.'}
                           </CardContent>
-                          <Button id={response[i + 1].html_url} variant="text" onClick={createProject}>選擇</Button>
+                          <Button
+                            id={response[i + 1].html_url}
+                            variant="text"
+                            onClick={createProject}
+                          >
+                            選擇
+                          </Button>
                         </Card>
                       )}
                     </List>

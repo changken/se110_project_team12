@@ -9,17 +9,21 @@ export default function GithubAuthorize() {
   const location = useLocation();
 
   useEffect(() => {
+    const jwtToken = localStorage.getItem('jwtToken');
+
     const urlSearchParams = new URLSearchParams(location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
 
     const code = params['code'];
-    const host = 'http://localhost:8080/oauth/github';
+    const host = 'http://localhost:9100/pvs-api/oauth/github';
     let payload = {
       code: code,
     };
 
     axios
-      .post(host, payload)
+      .post(host, payload, {
+        headers: { Authorization: `${jwtToken}` },
+      })
       .then(res => {
         localStorage.setItem('token', res.data);
       })
@@ -29,7 +33,7 @@ export default function GithubAuthorize() {
     var timer = setInterval(() => {
       clearInterval(timer);
       window.close();
-    }, 500);
+    }, 1000);
   });
 
   return (

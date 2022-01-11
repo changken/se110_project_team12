@@ -158,6 +158,6 @@ public class ProjectController {
 
     @PostMapping("/oauth/github/repos/delete")
     public String DeleteARepoOAuth(@RequestBody GitHubRepoDeleteDTO gitHubDeleteDTO) {
-        return repositoryService.DeleteARepoForTheOAuth(gitHubDeleteDTO);
+        return repositoryService.DeleteARepoOAuth(gitHubDeleteDTO);
     }
 }
