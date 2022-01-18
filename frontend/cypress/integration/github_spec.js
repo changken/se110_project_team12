@@ -33,17 +33,12 @@ describe('test github', () => {
     cy.url().should('include', 'select');
   });
 
-  //TODO add project & add github repository
-  //   it('add project & add github repository', () => {});
-
   it('click a github repository', () => {
     cy.contains('se110_project_team12').click();
 
     cy.url().should('include', 'dashboard');
 
     cy.contains('se110_project_team12');
-
-    // expect(localStorage.getItem('projectId')).to.equal(8);
   });
 
   it('github commit page test', () => {

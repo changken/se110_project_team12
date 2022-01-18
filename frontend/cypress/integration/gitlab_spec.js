@@ -39,8 +39,6 @@ describe('test gitlab', () => {
   });
 
   it("gitlab list user's repository test", () => {
-    // cy.visit('http://localhost:3001/select');
-
     //click add project
     cy.get('#create-project-card').click();
 
@@ -57,8 +55,6 @@ describe('test gitlab', () => {
   });
 
   it('gitlab commit page test', () => {
-    // cy.visit('http://localhost:3001/gitlabcommits/21380487');
-
     cy.contains('Team');
     cy.contains('Member');
 
