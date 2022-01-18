@@ -24,8 +24,8 @@ spring:
     active: test
   datasource:
     url: jdbc:postgresql://localhost:5432/PVS
-    username: "changken"
-    password: "8Abcd40000"
+    username: "Your db username"
+    password: "Your db user password"
     driver-class-name: org.postgresql.Driver
   jpa:
     properties:
@@ -44,8 +44,8 @@ spring:
       client:
         registration:
           gitlab:
-            client-id: 1e5a814bb19650202011c7adeff5c65ec2107206137ea58cc9b8da4ae64f5026
-            client-secret: 31a259896412d78d0ad047fb7f1e40cf2f0b68b2cd88816bf33acc06638f8b5d
+            client-id: "Your client key"
+            client-secret: "Your client secret key"
             authorization-grant-type: authorization_code
             redirectUriTemplate: '{baseUrl}/login/oauth2/code/{registrationId}'
             scope:
